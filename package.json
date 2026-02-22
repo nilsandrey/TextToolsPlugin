@@ -1,0 +1,21 @@
+{
+  "name": "obsidian-text-tools",
+  "version": "1.0.0",
+  "description": "Text manipulation tools for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+  },
+  "keywords": ["obsidian", "plugin", "text", "tools"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "builtin-modules": "3.3.0",
+    "esbuild": "0.24.0",
+    "obsidian": "latest",
+    "tslib": "2.6.0",
+    "typescript": "5.4.5"
+  }
+}

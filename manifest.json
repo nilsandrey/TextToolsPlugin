@@ -1,0 +1,10 @@
+{
+  "id": "text-tools",
+  "name": "Text Tools",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Text manipulation commands: case conversion, line numbering, and more. Works with single and multiple selections.",
+  "author": "",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}
