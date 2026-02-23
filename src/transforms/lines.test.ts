@@ -30,6 +30,149 @@ import {
 } from "./lines";
 
 // ---------------------------------------------------------------------------
+// Cross-platform line ending tests (CRLF vs LF)
+// ---------------------------------------------------------------------------
+
+describe("CRLF line ending support", () => {
+	describe("removeDuplicateLines with CRLF", () => {
+		it("should handle Windows-style CRLF line endings", () => {
+			const input = "apple\r\nbanana\r\napple\r\ncherry";
+			const expected = "apple\nbanana\ncherry";
+			expect(removeDuplicateLines(input)).toBe(expected);
+		});
+
+		it("should treat same content with different line endings as duplicates", () => {
+			const input = "hello\r\nhello";
+			expect(removeDuplicateLines(input)).toBe("hello");
+		});
+	});
+
+	describe("sortLinesCaseSensitive with CRLF", () => {
+		it("should sort CRLF lines correctly ascending", () => {
+			const input = "banana\r\napple\r\ncherry";
+			expect(sortLinesCaseSensitive(input, "asc")).toBe("apple\nbanana\ncherry");
+		});
+
+		it("should sort CRLF lines correctly descending", () => {
+			const input = "banana\r\napple\r\ncherry";
+			expect(sortLinesCaseSensitive(input, "desc")).toBe("cherry\nbanana\napple");
+		});
+	});
+
+	describe("sortLinesCaseInsensitive with CRLF", () => {
+		it("should sort CRLF lines case-insensitively", () => {
+			const input = "Banana\r\napple\r\nCherry";
+			expect(sortLinesCaseInsensitive(input, "asc")).toBe("apple\nBanana\nCherry");
+		});
+	});
+
+	describe("sortLinesByLength with CRLF", () => {
+		it("should sort CRLF lines by length correctly", () => {
+			const input = "aaa\r\na\r\naa";
+			expect(sortLinesByLength(input, "asc")).toBe("a\naa\naaa");
+		});
+	});
+
+	describe("sortLinesByWordCount with CRLF", () => {
+		it("should sort CRLF lines by word count correctly", () => {
+			const input = "one two three\r\none\r\none two";
+			expect(sortLinesByWordCount(input, "asc")).toBe("one\none two\none two three");
+		});
+	});
+
+	describe("sortLinesByLastWord with CRLF", () => {
+		it("should sort CRLF lines by last word correctly", () => {
+			const input = "hello zebra\r\nhello apple\r\nhello mango";
+			expect(sortLinesByLastWord(input, "asc")).toBe("hello apple\nhello mango\nhello zebra");
+		});
+	});
+
+	describe("removeBlankLines with CRLF", () => {
+		it("should handle CRLF blank lines", () => {
+			const input = "a\r\n\r\nb\r\n   \r\nc";
+			expect(removeBlankLines(input)).toBe("a\nb\nc");
+		});
+	});
+
+	describe("removeEmptyLines with CRLF", () => {
+		it("should handle CRLF empty lines", () => {
+			const input = "a\r\n\r\nb";
+			expect(removeEmptyLines(input)).toBe("a\nb");
+		});
+	});
+
+	describe("removeSurplusBlankLines with CRLF", () => {
+		it("should collapse multiple CRLF blank lines", () => {
+			const input = "a\r\n\r\n\r\nb";
+			expect(removeSurplusBlankLines(input)).toBe("a\n\nb");
+		});
+	});
+
+	describe("trimLines with CRLF", () => {
+		it("should trim CRLF lines correctly", () => {
+			const input = "  hello  \r\n  world  ";
+			expect(trimLines(input)).toBe("hello\nworld");
+		});
+	});
+
+	describe("prefixLines with CRLF", () => {
+		it("should prefix CRLF lines correctly", () => {
+			const input = "hello\r\nworld";
+			expect(prefixLines(input, "> ")).toBe("> hello\n> world");
+		});
+	});
+
+	describe("suffixLines with CRLF", () => {
+		it("should suffix CRLF lines correctly", () => {
+			const input = "hello\r\nworld";
+			expect(suffixLines(input, "!")).toBe("hello!\nworld!");
+		});
+	});
+
+	describe("joinAllLines with CRLF", () => {
+		it("should join CRLF lines correctly", () => {
+			const input = "a\r\nb\r\nc";
+			expect(joinAllLines(input, ", ")).toBe("a, b, c");
+		});
+	});
+
+	describe("countLineOccurrences with CRLF", () => {
+		it("should count CRLF line occurrences correctly", () => {
+			const input = "a\r\nb\r\na\r\na";
+			expect(countLineOccurrences(input)).toBe("3\ta\n1\tb");
+		});
+	});
+
+	describe("padLinesStart with CRLF", () => {
+		it("should pad CRLF lines correctly", () => {
+			const input = "a\r\nab";
+			expect(padLinesStart(input, 3, "0")).toBe("00a\n0ab");
+		});
+	});
+
+	describe("shuffleLines with CRLF", () => {
+		it("should preserve all lines when shuffling CRLF input", () => {
+			const input = "a\r\nb\r\nc";
+			const result = shuffleLines(input);
+			const resultLines = result.split("\n").sort();
+			expect(resultLines).toEqual(["a", "b", "c"]);
+		});
+	});
+
+	describe("mixed LF and CRLF", () => {
+		it("should handle mixed line endings in sorting", () => {
+			const input = "cherry\r\napple\nbanana";
+			expect(sortLinesCaseSensitive(input, "asc")).toBe("apple\nbanana\ncherry");
+		});
+
+		it("should handle mixed line endings in deduplication", () => {
+			const input = "hello\r\nhello\nhello";
+			expect(removeDuplicateLines(input)).toBe("hello");
+		});
+	});
+});
+
+// ---------------------------------------------------------------------------
 // Deduplication tests
 // ---------------------------------------------------------------------------
 
