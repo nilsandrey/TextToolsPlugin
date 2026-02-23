@@ -3,7 +3,8 @@
 // ---------------------------------------------------------------------------
 
 function getLines(text: string): string[] {
-	return text.split("\n");
+	// Normalize line endings: convert CRLF to LF before splitting
+	return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
 }
 
 function joinLines(lines: string[]): string {
