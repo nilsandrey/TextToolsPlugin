@@ -5,9 +5,17 @@
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
-  "keywords": ["obsidian", "plugin", "text", "tools"],
+  "keywords": [
+    "obsidian",
+    "plugin",
+    "text",
+    "tools"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
@@ -16,6 +24,7 @@
     "esbuild": "0.24.0",
     "obsidian": "latest",
     "tslib": "2.6.0",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "vitest": "^1.6.1"
   }
 }
