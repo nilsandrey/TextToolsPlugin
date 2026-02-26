@@ -371,6 +371,19 @@ describe("sortLinesCaseSensitive", () => {
 		const input = "10\n2\n1";
 		expect(sortLinesCaseSensitive(input, "asc")).toBe("1\n10\n2");
 	});
+
+	it("should handle trailing newline (full line selection)", () => {
+		// When selecting full lines, editors often include a trailing newline
+		const input = "banana\napple\ncherry\n";
+		expect(sortLinesCaseSensitive(input, "asc")).toBe("apple\nbanana\ncherry\n");
+	});
+
+	it("should not add empty line at start when sorting with trailing newline", () => {
+		const input = "cherry\napple\nbanana\n";
+		const result = sortLinesCaseSensitive(input, "asc");
+		expect(result.startsWith("apple")).toBe(true);
+		expect(result).toBe("apple\nbanana\ncherry\n");
+	});
 });
 
 describe("sortLinesCaseInsensitive", () => {
@@ -392,6 +405,11 @@ describe("sortLinesCaseInsensitive", () => {
 		const input = "Apple\napple\nAPPLE";
 		const result = sortLinesCaseInsensitive(input, "asc");
 		expect(result.split("\n")).toHaveLength(3);
+	});
+
+	it("should handle trailing newline", () => {
+		const input = "Cherry\napple\nBanana\n";
+		expect(sortLinesCaseInsensitive(input, "asc")).toBe("apple\nBanana\nCherry\n");
 	});
 });
 
@@ -419,6 +437,11 @@ describe("sortLinesByLength", () => {
 	it("should count spaces in length", () => {
 		const input = "ab\na b c";
 		expect(sortLinesByLength(input, "asc")).toBe("ab\na b c");
+	});
+
+	it("should handle trailing newline", () => {
+		const input = "aaa\na\naa\n";
+		expect(sortLinesByLength(input, "asc")).toBe("a\naa\naaa\n");
 	});
 });
 
@@ -451,6 +474,11 @@ describe("sortLinesByWordCount", () => {
 		const input = "one\n   \ntwo words";
 		expect(sortLinesByWordCount(input, "asc")).toBe("   \none\ntwo words");
 	});
+
+	it("should handle trailing newline", () => {
+		const input = "one two three\none\none two\n";
+		expect(sortLinesByWordCount(input, "asc")).toBe("one\none two\none two three\n");
+	});
 });
 
 describe("sortLinesByLastWord", () => {
@@ -482,6 +510,11 @@ describe("sortLinesByLastWord", () => {
 		const input = "hello world\n\napple";
 		const result = sortLinesByLastWord(input, "asc");
 		expect(result.split("\n")[0]).toBe("");
+	});
+
+	it("should handle trailing newline", () => {
+		const input = "hello zebra\nhello apple\nhello mango\n";
+		expect(sortLinesByLastWord(input, "asc")).toBe("hello apple\nhello mango\nhello zebra\n");
 	});
 });
 
@@ -520,6 +553,15 @@ describe("shuffleLines", () => {
 			results.add(shuffleLines(input));
 		}
 		expect(results.size).toBeGreaterThan(1);
+	});
+
+	it("should handle trailing newline", () => {
+		const input = "a\nb\nc\n";
+		const result = shuffleLines(input);
+		// Should preserve trailing newline and contain all original lines
+		expect(result.endsWith("\n")).toBe(true);
+		const resultLines = result.slice(0, -1).split("\n").sort();
+		expect(resultLines).toEqual(["a", "b", "c"]);
 	});
 });
 

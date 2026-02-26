@@ -2,13 +2,39 @@
 // Line-level operations
 // ---------------------------------------------------------------------------
 
+function normalizeLineEndings(text: string): string {
+	return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+}
+
 function getLines(text: string): string[] {
-	// Normalize line endings: convert CRLF to LF before splitting
-	return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+	return normalizeLineEndings(text).split("\n");
 }
 
 function joinLines(lines: string[]): string {
 	return lines.join("\n");
+}
+
+/**
+ * Helper to process text while preserving trailing newline.
+ * Many editor selections include a trailing newline when selecting full lines.
+ * Without this, sorting would treat the trailing newline as an empty line
+ * that gets sorted to the top (ascending) or bottom (descending).
+ */
+function withPreservedTrailingNewline(
+	text: string,
+	processor: (lines: string[]) => string[]
+): string {
+	const normalized = normalizeLineEndings(text);
+	const hasTrailingNewline = normalized.endsWith("\n");
+	const lines = normalized.split("\n");
+
+	// If there's a trailing newline, the last element will be empty - remove it for processing
+	if (hasTrailingNewline && lines.length > 0 && lines[lines.length - 1] === "") {
+		lines.pop();
+	}
+
+	const result = joinLines(processor(lines));
+	return hasTrailingNewline ? result + "\n" : result;
 }
 
 // ---------------------------------------------------------------------------
@@ -93,26 +119,26 @@ function sorted(lines: string[], dir: SortDir, key: (l: string) => string | numb
 }
 
 export function sortLinesCaseSensitive(text: string, dir: SortDir): string {
-	return joinLines(sorted(getLines(text), dir));
+	return withPreservedTrailingNewline(text, (lines) => sorted(lines, dir));
 }
 
 export function sortLinesCaseInsensitive(text: string, dir: SortDir): string {
-	return joinLines(sorted(getLines(text), dir, (l) => l.toLowerCase()));
+	return withPreservedTrailingNewline(text, (lines) => sorted(lines, dir, (l) => l.toLowerCase()));
 }
 
 export function sortLinesByLength(text: string, dir: SortDir): string {
-	return joinLines(sorted(getLines(text), dir, (l) => l.length));
+	return withPreservedTrailingNewline(text, (lines) => sorted(lines, dir, (l) => l.length));
 }
 
 export function sortLinesByWordCount(text: string, dir: SortDir): string {
-	return joinLines(
-		sorted(getLines(text), dir, (l) => l.trim().split(/\s+/).filter(Boolean).length)
+	return withPreservedTrailingNewline(text, (lines) =>
+		sorted(lines, dir, (l) => l.trim().split(/\s+/).filter(Boolean).length)
 	);
 }
 
 export function sortLinesByLastWord(text: string, dir: SortDir): string {
-	return joinLines(
-		sorted(getLines(text), dir, (l) => {
+	return withPreservedTrailingNewline(text, (lines) =>
+		sorted(lines, dir, (l) => {
 			const words = l.trim().split(/\s+/);
 			return words[words.length - 1]?.toLowerCase() ?? "";
 		})
@@ -124,12 +150,13 @@ export function sortLinesByLastWord(text: string, dir: SortDir): string {
 // ---------------------------------------------------------------------------
 
 export function shuffleLines(text: string): string {
-	const lines = getLines(text);
-	for (let i = lines.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[lines[i], lines[j]] = [lines[j], lines[i]];
-	}
-	return joinLines(lines);
+	return withPreservedTrailingNewline(text, (lines) => {
+		for (let i = lines.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[lines[i], lines[j]] = [lines[j], lines[i]];
+		}
+		return lines;
+	});
 }
 
 // ---------------------------------------------------------------------------
