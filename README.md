@@ -1,8 +1,8 @@
-# Local Text Tools
+# Local Text Tools Plugin for Obsidian
 
-**Local Text Manipulation Tools Plugin for Obsidian**
+**Text Manipulation Tools Plugin for [Obsidian](https://obsidian.md) with simple commands that run locally in your vault.**
 
-A powerful Obsidian plugin that provides ~80 text manipulation commands accessible from the Command Palette with the prefix **`Text Tools:`**. Inspired by the [Text Power Tools](https://marketplace.visualstudio.com/items?itemName=qcz.text-power-tools) plugin for Visual Studio Code by [Dániel Tar](https://github.com/qcz).
+An Obsidian plugin that provides ~80 text manipulation commands accessible from the Command Palette with the prefix **`Text Tools:`**.
 
 ## Commands Overview
 
@@ -195,14 +195,3 @@ See [CHANGELOG.md](CHANGELOG.md) for a history of changes.
 
 - Inspired by [Text Power Tools](https://marketplace.visualstudio.com/items?itemName=qcz.text-power-tools) for Visual Studio Code by [Dániel Tar](https://github.com/qcz).
 - Built with the [Obsidian Plugin API](https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin).
-
----
-
-## Roadmap
-
-- [ ] Settings-driven default values for more commands
-- [ ] Regex history persistence across sessions
-- [ ] Additional sequence types (Roman numerals, fibonacci, …)
-- [ ] Community-requested transforms
-
-> Have an idea? [Open a feature request](../../issues/new?template=feature_request.md).
