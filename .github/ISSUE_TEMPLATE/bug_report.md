@@ -15,7 +15,7 @@ assignees: []
 
 1. Open Obsidian and navigate to…
 2. Select text…
-3. Open the Command Palette and run `Text Tools: …`
+3. Open the Command Palette and run the relevant Local Text Tools command (e.g. `Local Text Tools: Upper case`)
 4. Observe the result
 
 ## Expected Behaviour

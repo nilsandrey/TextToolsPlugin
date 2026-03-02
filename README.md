@@ -2,7 +2,7 @@
 
 **Text Manipulation Tools Plugin for [Obsidian](https://obsidian.md) with simple commands that run locally in your vault.**
 
-An Obsidian plugin that provides ~80 text manipulation commands accessible from the Command Palette with the prefix **`Text Tools:`**.
+An Obsidian plugin that provides ~80 text manipulation commands accessible from the Command Palette with the prefix **`Local Text Tools:`**.
 
 ## Commands Overview
 
@@ -34,7 +34,7 @@ An Obsidian plugin that provides ~80 text manipulation commands accessible from 
 ## Usage
 
 1. Open the **Command Palette** (`Ctrl/Cmd + P`).
-2. Type **`Text Tools:`** followed by the command name (e.g. `Text Tools: Upper case`).
+2. Type **`Local Text Tools:`** followed by the command name (e.g. `Local Text Tools: Upper case`).
 3. The command is applied to each active selection. If nothing is selected, you will be prompted to select text first.
 
 Some commands open a small modal to collect additional input (e.g. the delimiter for *Split lines*, or the range for *Insert random integer*).
