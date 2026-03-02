@@ -136,14 +136,6 @@ export function sortLinesByWordCount(text: string, dir: SortDir): string {
 	);
 }
 
-export function sortLinesByLastWord(text: string, dir: SortDir): string {
-	return withPreservedTrailingNewline(text, (lines) =>
-		sorted(lines, dir, (l) => {
-			const words = l.trim().split(/\s+/);
-			return words[words.length - 1]?.toLowerCase() ?? "";
-		})
-	);
-}
 
 // ---------------------------------------------------------------------------
 // Shuffle

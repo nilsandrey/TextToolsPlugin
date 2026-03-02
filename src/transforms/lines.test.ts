@@ -10,7 +10,6 @@ import {
 	sortLinesCaseInsensitive,
 	sortLinesByLength,
 	sortLinesByWordCount,
-	sortLinesByLastWord,
 	shuffleLines,
 	trimLines,
 	trimLinesStart,
@@ -80,12 +79,6 @@ describe("CRLF line ending support", () => {
 		});
 	});
 
-	describe("sortLinesByLastWord with CRLF", () => {
-		it("should sort CRLF lines by last word correctly", () => {
-			const input = "hello zebra\r\nhello apple\r\nhello mango";
-			expect(sortLinesByLastWord(input, "asc")).toBe("hello apple\nhello mango\nhello zebra");
-		});
-	});
 
 	describe("removeBlankLines with CRLF", () => {
 		it("should handle CRLF blank lines", () => {
@@ -481,42 +474,6 @@ describe("sortLinesByWordCount", () => {
 	});
 });
 
-describe("sortLinesByLastWord", () => {
-	it("should sort by last word ascending", () => {
-		const input = "hello zebra\nhello apple\nhello mango";
-		expect(sortLinesByLastWord(input, "asc")).toBe("hello apple\nhello mango\nhello zebra");
-	});
-
-	it("should sort by last word descending", () => {
-		const input = "hello zebra\nhello apple\nhello mango";
-		expect(sortLinesByLastWord(input, "desc")).toBe("hello zebra\nhello mango\nhello apple");
-	});
-
-	it("should be case insensitive for last word", () => {
-		const input = "hello Zebra\nhello apple\nhello MANGO";
-		expect(sortLinesByLastWord(input, "asc")).toBe("hello apple\nhello MANGO\nhello Zebra");
-	});
-
-	it("should handle empty input", () => {
-		expect(sortLinesByLastWord("", "asc")).toBe("");
-	});
-
-	it("should handle single word lines", () => {
-		const input = "zebra\napple\nmango";
-		expect(sortLinesByLastWord(input, "asc")).toBe("apple\nmango\nzebra");
-	});
-
-	it("should handle empty lines", () => {
-		const input = "hello world\n\napple";
-		const result = sortLinesByLastWord(input, "asc");
-		expect(result.split("\n")[0]).toBe("");
-	});
-
-	it("should handle trailing newline", () => {
-		const input = "hello zebra\nhello apple\nhello mango\n";
-		expect(sortLinesByLastWord(input, "asc")).toBe("hello apple\nhello mango\nhello zebra\n");
-	});
-});
 
 // ---------------------------------------------------------------------------
 // Shuffle tests
