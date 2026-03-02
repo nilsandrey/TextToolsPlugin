@@ -1,9 +1,9 @@
 {
   "id": "text-tools",
-  "name": "Text Tools",
+  "name": "Local Text Tools",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "Text manipulation commands: case conversion, line numbering, and more. Works with single and multiple selections.",
+  "description": "Local Text Manipulation Tools Plugin for Obsidian",
   "author": "",
   "authorUrl": "",
   "isDesktopOnly": false
