@@ -137,20 +137,26 @@ jobs:
           BUMP="${{ steps.bump.outputs.bump_type }}"
           PR="${{ steps.bump.outputs.pr_number }}"
 
-          ENTRY="## [${NEW}] – ${DATE}\n\n### Changed\n\n${DESCRIPTION}\n\n[${NEW}]: https://github.com/${{ github.repository }}/releases/tag/v${NEW}\n"
 
           # Insert new entry after the first line (# Changelog header)
-          node -e "
-            const fs = require('fs');
-            const content = fs.readFileSync('CHANGELOG.md', 'utf8');
-            const lines = content.split('\n');
-            // Find the first blank line after the header block (first ## or first blank after front matter)
-            let insertAt = lines.findIndex((l, i) => i > 0 && l.startsWith('## '));
+          NEW="$NEW" DATE="$DATE" DESCRIPTION="$DESCRIPTION" PR="$PR" node -e '
+            const fs = require("fs");
+            const NEW = process.env.NEW;
+            const DATE = process.env.DATE;
+            const DESCRIPTION = process.env.DESCRIPTION || "";
+            const PR = process.env.PR;
+            const REPO = process.env.GITHUB_REPOSITORY;
+
+            const content = fs.readFileSync("CHANGELOG.md", "utf8");
+            const lines = content.split("\n");
+            // Find the first line that starts with "## " after the header
+            let insertAt = lines.findIndex((l, i) => i > 0 && l.startsWith("## "));
             if (insertAt === -1) insertAt = lines.length;
-            const entry = \`## [${NEW}] – ${DATE}\n\n### Changed\n\n${DESCRIPTION.replace(/'/g, \"'\\\\''\")} (PR #${PR})\n\n[${NEW}]: https://github.com/${{ github.repository }}/releases/tag/v${NEW}\n\`;
+
+            const entry = `## [${NEW}] – ${DATE}\n\n### Changed\n\n${DESCRIPTION} (PR #${PR})\n\n[${NEW}]: https://github.com/${REPO}/releases/tag/v${NEW}\n`;
             lines.splice(insertAt, 0, entry);
-            fs.writeFileSync('CHANGELOG.md', lines.join('\n'));
-          "
+            fs.writeFileSync("CHANGELOG.md", lines.join("\n"));
+          '
 
       - name: Commit version and changelog updates
         if: steps.bump.outputs.bump_type != 'none'
