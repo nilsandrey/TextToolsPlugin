@@ -37,7 +37,7 @@
 
 <!-- Complete all applicable items before requesting a review. -->
 
-- [ ] I have read [CONTRIBUTING.md](../CONTRIBUTING.md)
+- [ ] I have read [CONTRIBUTING.md](CONTRIBUTING.md)
 - [ ] The build passes locally (`npm run build`)
 - [ ] All tests pass locally (`npm test`)
 - [ ] New or modified transforms have unit tests
