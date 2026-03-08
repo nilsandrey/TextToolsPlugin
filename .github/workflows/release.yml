@@ -51,7 +51,9 @@ jobs:
               break
             fi
             echo "Attempt $attempt: commits/pulls API returned no results, retrying in $((attempt * 5))s..."
-            sleep $((attempt * 5))
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 5))
+            fi
           done
 
           # Fallback: extract PR number from squash-merge commit message "(#N)"
