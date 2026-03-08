@@ -12,7 +12,7 @@ export class TextToolsSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl("h2", { text: "Text Tools" });
+		containerEl.createEl("h2", { text: "Local Text Tools" });
 
 		// ------------------------------------------------------------------ //
 		// Line numbers
