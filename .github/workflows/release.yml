@@ -43,9 +43,14 @@ jobs:
 
           # Retry up to 3 times with increasing delay to handle indexing lag
           # after squash-merge commits.
+          GH_ERR_FILE="$RUNNER_TEMP/gh_api_err_$$"
           for attempt in 1 2 3; do
+            API_ERR=""
             PR_DATA=$(gh api "repos/${{ github.repository }}/commits/$COMMIT_SHA/pulls" \
-              --jq '.[0] // empty' 2>/dev/null || echo "")
+              --jq '.[0] // empty' 2>"$GH_ERR_FILE") || API_ERR=$(cat "$GH_ERR_FILE")
+            if [ -n "$API_ERR" ]; then
+              echo "::warning::Attempt $attempt: commits/pulls API error: $API_ERR"
+            fi
             if [ -n "$PR_DATA" ]; then
               echo "Found PR via commits/pulls API (attempt $attempt)."
               break
@@ -62,7 +67,12 @@ jobs:
             PR_NUMBER=$(git log -1 --format=%s "$COMMIT_SHA" | grep -oE '\(#[0-9]+\)' | tail -1 | tr -d '(#)')
             if [ -n "$PR_NUMBER" ]; then
               echo "Found PR #$PR_NUMBER from commit message."
-              PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" 2>/dev/null || echo "")
+              API_ERR=""
+              PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" 2>"$GH_ERR_FILE") || API_ERR=$(cat "$GH_ERR_FILE")
+              if [ -n "$API_ERR" ]; then
+                echo "::error::Failed to fetch PR #$PR_NUMBER: $API_ERR"
+                exit 1
+              fi
             fi
           fi
 
