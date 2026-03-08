@@ -52,16 +52,17 @@ jobs:
           PR_BODY=$(echo "$PR_DATA" | jq -r '.body // ""')
           PR_NUMBER=$(echo "$PR_DATA" | jq -r '.number')
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          echo "pr_body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$PR_BODY" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
 
+          DELIM="EOF_$(uuidgen 2>/dev/null || echo "${RANDOM}${RANDOM}")"
+          printf 'pr_body<<%s\n' "$DELIM" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$PR_BODY" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$DELIM" >> "$GITHUB_OUTPUT"
           # Detect checked version-bump checkbox
-          if echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[x\] \*\*Major\*\*'; then
+          if echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Major\*\*'; then
             echo "bump_type=major" >> "$GITHUB_OUTPUT"
-          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[x\] \*\*Minor\*\*'; then
+          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Minor\*\*'; then
             echo "bump_type=minor" >> "$GITHUB_OUTPUT"
-          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[x\] \*\*Patch\*\*'; then
+          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Patch\*\*'; then
             echo "bump_type=patch" >> "$GITHUB_OUTPUT"
           else
             echo "bump_type=none" >> "$GITHUB_OUTPUT"
@@ -127,9 +128,12 @@ jobs:
             DESCRIPTION="No description provided."
           fi
 
-          echo "description<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$DESCRIPTION" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          DELIM="EOF_$(date +%s)_$RANDOM"
+          {
+            echo "description<<$DELIM"
+            echo "$DESCRIPTION"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Update CHANGELOG.md
         if: steps.bump.outputs.bump_type != 'none'
