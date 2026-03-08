@@ -49,16 +49,25 @@ jobs:
 
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
+          # Write PR body to a temp file to reliably preserve multiline content
+          PR_BODY_FILE=$(mktemp)
+          printf '%s\n' "$PR_BODY" > "$PR_BODY_FILE"
+
           DELIM="EOF_$(uuidgen 2>/dev/null || echo "${RANDOM}${RANDOM}")"
           printf 'pr_body<<%s\n' "$DELIM" >> "$GITHUB_OUTPUT"
-          printf '%s\n' "$PR_BODY" >> "$GITHUB_OUTPUT"
+          cat "$PR_BODY_FILE" >> "$GITHUB_OUTPUT"
           printf '%s\n' "$DELIM" >> "$GITHUB_OUTPUT"
+
+          # Extract only the checkbox lines between version-bump markers
+          CHECKBOX_LINES=$(awk '/<!--changelog-type-start-->/, /<!--changelog-type-end-->/' "$PR_BODY_FILE")
+          rm -f "$PR_BODY_FILE"
+
           # Detect checked version-bump checkbox
-          if echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Major\*\*'; then
+          if echo "$CHECKBOX_LINES" | grep -qE '\- \[[xX]\] \*\*Major\*\*'; then
             echo "bump_type=major" >> "$GITHUB_OUTPUT"
-          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Minor\*\*'; then
+          elif echo "$CHECKBOX_LINES" | grep -qE '\- \[[xX]\] \*\*Minor\*\*'; then
             echo "bump_type=minor" >> "$GITHUB_OUTPUT"
-          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Patch\*\*'; then
+          elif echo "$CHECKBOX_LINES" | grep -qE '\- \[[xX]\] \*\*Patch\*\*'; then
             echo "bump_type=patch" >> "$GITHUB_OUTPUT"
           else
             echo "::error::No version bump checkbox selected in PR #$PR_NUMBER."
