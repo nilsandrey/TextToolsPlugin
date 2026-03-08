@@ -59,7 +59,7 @@ jobs:
           # Fallback: extract PR number from squash-merge commit message "(#N)"
           if [ -z "$PR_DATA" ]; then
             echo "Commits/pulls API returned no results. Trying commit-message fallback..."
-            PR_NUMBER=$(git log -1 --format=%s "$COMMIT_SHA" | grep -oE '\(#[0-9]+\)' | head -1 | tr -d '(#)')
+            PR_NUMBER=$(git log -1 --format=%s "$COMMIT_SHA" | grep -oE '\(#[0-9]+\)' | tail -1 | tr -d '(#)')
             if [ -n "$PR_NUMBER" ]; then
               echo "Found PR #$PR_NUMBER from commit message."
               PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" 2>/dev/null || echo "")
