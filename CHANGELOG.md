@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.2] – 2026-03-08
+
+### Changed
+
+Remove "v" prefix from release tags and titles, switching version tag format from `v#.#.#` to `#.#.#` across the release pipeline and changelog. (PR #7)
+
+[1.0.2]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.2
+
 ## [1.0.1] – 2026-03-08
 
 ### Changed
