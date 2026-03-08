@@ -60,14 +60,18 @@ jobs:
 
           # Extract only the checkbox lines between version-bump markers
           CHECKBOX_LINES=$(awk '/<!--changelog-type-start-->/, /<!--changelog-type-end-->/' "$PR_BODY_FILE")
+          if [ -z "$CHECKBOX_LINES" ]; then
+            echo "::warning::Version-bump markers not found in PR body; scanning full body."
+            CHECKBOX_LINES=$(cat "$PR_BODY_FILE")
+          fi
           rm -f "$PR_BODY_FILE"
 
           # Detect checked version-bump checkbox
-          if echo "$CHECKBOX_LINES" | grep -qE '\- \[[xX]\] \*\*Major\*\*'; then
+          if grep -qE '\- \[[xX]\] \*\*Major\*\*' <<< "$CHECKBOX_LINES"; then
             echo "bump_type=major" >> "$GITHUB_OUTPUT"
-          elif echo "$CHECKBOX_LINES" | grep -qE '\- \[[xX]\] \*\*Minor\*\*'; then
+          elif grep -qE '\- \[[xX]\] \*\*Minor\*\*' <<< "$CHECKBOX_LINES"; then
             echo "bump_type=minor" >> "$GITHUB_OUTPUT"
-          elif echo "$CHECKBOX_LINES" | grep -qE '\- \[[xX]\] \*\*Patch\*\*'; then
+          elif grep -qE '\- \[[xX]\] \*\*Patch\*\*' <<< "$CHECKBOX_LINES"; then
             echo "bump_type=patch" >> "$GITHUB_OUTPUT"
           else
             echo "::error::No version bump checkbox selected in PR #$PR_NUMBER."
