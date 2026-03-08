@@ -1,0 +1,211 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    name: Update changelog and create release
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Determine version bump from merged PR
+        id: bump
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the PR that was merged with this push using the commits/pulls API
+          COMMIT_SHA="${{ github.sha }}"
+          PR_DATA=$(gh api "repos/${{ github.repository }}/commits/$COMMIT_SHA/pulls" \
+            --jq '.[0] // empty' 2>/dev/null || echo "")
+
+          if [ -z "$PR_DATA" ]; then
+            echo "No merged PR found for this commit. Skipping release."
+            echo "bump_type=none" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          PR_BODY=$(echo "$PR_DATA" | jq -r '.body // ""')
+          PR_NUMBER=$(echo "$PR_DATA" | jq -r '.number')
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+          DELIM="EOF_$(uuidgen 2>/dev/null || echo "${RANDOM}${RANDOM}")"
+          printf 'pr_body<<%s\n' "$DELIM" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$PR_BODY" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$DELIM" >> "$GITHUB_OUTPUT"
+          # Detect checked version-bump checkbox
+          if echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Major\*\*'; then
+            echo "bump_type=major" >> "$GITHUB_OUTPUT"
+          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Minor\*\*'; then
+            echo "bump_type=minor" >> "$GITHUB_OUTPUT"
+          elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Patch\*\*'; then
+            echo "bump_type=patch" >> "$GITHUB_OUTPUT"
+          else
+            echo "bump_type=none" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compute new version
+        if: steps.bump.outputs.bump_type != 'none'
+        id: version
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          BUMP="${{ steps.bump.outputs.bump_type }}"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "current_version=$CURRENT" >> "$GITHUB_OUTPUT"
+
+      - name: Update version in package.json and manifest.json
+        if: steps.bump.outputs.bump_type != 'none'
+        run: |
+          NEW="${{ steps.version.outputs.new_version }}"
+          # Update package.json
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '${NEW}';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+          # Update manifest.json
+          node -e "
+            const fs = require('fs');
+            const m = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+            m.version = '${NEW}';
+            fs.writeFileSync('manifest.json', JSON.stringify(m, null, 2) + '\n');
+          "
+          # Update versions.json
+          node -e "
+            const fs = require('fs');
+            const v = JSON.parse(fs.readFileSync('versions.json', 'utf8'));
+            const minApp = JSON.parse(fs.readFileSync('manifest.json', 'utf8')).minAppVersion;
+            v['${NEW}'] = minApp;
+            fs.writeFileSync('versions.json', JSON.stringify(v, null, 2) + '\n');
+          "
+
+      - name: Extract PR description for changelog
+        if: steps.bump.outputs.bump_type != 'none'
+        id: changelog_entry
+        env:
+          PR_BODY: ${{ steps.bump.outputs.pr_body }}
+        run: |
+          # Extract text between changelog-description markers
+          DESCRIPTION=$(echo "$PR_BODY" | \
+            awk '/<!--changelog-description-start-->/,/<!--changelog-description-end-->/' | \
+            grep -v '<!--' | sed '/^[[:space:]]*$/d')
+
+          if [ -z "$DESCRIPTION" ]; then
+            DESCRIPTION="No description provided."
+          fi
+
+          DELIM="EOF_$(date +%s)_$RANDOM"
+          {
+            echo "description<<$DELIM"
+            echo "$DESCRIPTION"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update CHANGELOG.md
+        if: steps.bump.outputs.bump_type != 'none'
+        env:
+          NEW: ${{ steps.version.outputs.new_version }}
+          DESCRIPTION: ${{ steps.changelog_entry.outputs.description }}
+          PR_NUMBER: ${{ steps.bump.outputs.pr_number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+
+          # Insert new entry after the first line (# Changelog header)
+          DATE="$DATE" node -e '
+            const fs = require("fs");
+            const NEW = process.env.NEW;
+            const DATE = process.env.DATE;
+            const DESCRIPTION = process.env.DESCRIPTION || "No description provided.";
+            const PR = process.env.PR_NUMBER;
+            const REPO = process.env.GITHUB_REPOSITORY;
+
+            const content = fs.readFileSync("CHANGELOG.md", "utf8");
+            const lines = content.split("\n");
+            // Find the first line that starts with "## " after the header
+            let insertAt = lines.findIndex((l, i) => i > 0 && l.startsWith("## "));
+            if (insertAt === -1) insertAt = lines.length;
+
+            const entry = `## [${NEW}] – ${DATE}\n\n### Changed\n\n${DESCRIPTION} (PR #${PR})\n\n[${NEW}]: https://github.com/${REPO}/releases/tag/v${NEW}\n`;
+            lines.splice(insertAt, 0, entry);
+            fs.writeFileSync("CHANGELOG.md", lines.join("\n"));
+          '
+
+      - name: Commit version and changelog updates
+        if: steps.bump.outputs.bump_type != 'none'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json manifest.json versions.json CHANGELOG.md
+          git commit -m "chore: release v${{ steps.version.outputs.new_version }} [skip ci]"
+          git push
+
+      - name: Build release artifacts
+        if: steps.bump.outputs.bump_type != 'none'
+        run: npm run build
+
+      - name: Create GitHub Release
+        if: steps.bump.outputs.bump_type != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW: ${{ steps.version.outputs.new_version }}
+          DESCRIPTION: ${{ steps.changelog_entry.outputs.description }}
+        run: |
+          gh release create "v${NEW}" \
+            --title "v${NEW}" \
+            --notes "${DESCRIPTION}" \
+            main.js manifest.json
+
+      # --------------------------------------------------------------------------
+      # Obsidian Community Plugins marketplace
+      # --------------------------------------------------------------------------
+      # Publishing to the Obsidian Community Plugins marketplace is a manual
+      # process that requires opening a pull request in the official
+      # obsidianmd/obsidian-releases repository:
+      #   https://github.com/obsidianmd/obsidian-releases
+      #
+      # Steps (one-time, to list the plugin):
+      #   1. Fork obsidianmd/obsidian-releases.
+      #   2. Add an entry to community-plugins.json with your plugin id, name,
+      #      author, description, and repo.
+      #   3. Open a PR to obsidianmd/obsidian-releases and wait for approval.
+      #
+      # Once listed, subsequent releases are picked up automatically by Obsidian
+      # when the GitHub release tag matches the version in manifest.json.
+      # No additional automation step is required for updates after the initial
+      # listing PR is merged.
+      # --------------------------------------------------------------------------
