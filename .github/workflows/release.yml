@@ -1,7 +1,9 @@
 name: Release
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
 
@@ -13,13 +15,14 @@ jobs:
   release:
     name: Update changelog and create release
     runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && github.event.pull_request.merged == true
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.base.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -36,54 +39,14 @@ jobs:
       - name: Determine version bump from merged PR
         id: bump
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BODY: ${{ github.event.pull_request.body || '' }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          # Find the PR that was merged with this push using the commits/pulls API
-          COMMIT_SHA="${{ github.sha }}"
-
-          # Retry up to 3 times with increasing delay to handle indexing lag
-          # after squash-merge commits.
-          GH_ERR_FILE="$RUNNER_TEMP/gh_api_err_$$"
-          for attempt in 1 2 3; do
-            API_ERR=""
-            PR_DATA=$(gh api "repos/${{ github.repository }}/commits/$COMMIT_SHA/pulls" \
-              --jq '.[0] // empty' 2>"$GH_ERR_FILE") || API_ERR=$(cat "$GH_ERR_FILE")
-            if [ -n "$API_ERR" ]; then
-              echo "::warning::Attempt $attempt: commits/pulls API error: $API_ERR"
-            fi
-            if [ -n "$PR_DATA" ]; then
-              echo "Found PR via commits/pulls API (attempt $attempt)."
-              break
-            fi
-            echo "Attempt $attempt: commits/pulls API returned no results, retrying in $((attempt * 5))s..."
-            if [ "$attempt" -lt 3 ]; then
-              sleep $((attempt * 5))
-            fi
-          done
-
-          # Fallback: extract PR number from squash-merge commit message "(#N)"
-          if [ -z "$PR_DATA" ]; then
-            echo "Commits/pulls API returned no results. Trying commit-message fallback..."
-            PR_NUMBER=$(git log -1 --format=%s "$COMMIT_SHA" | grep -oE '\(#[0-9]+\)' | tail -1 | tr -d '(#)')
-            if [ -n "$PR_NUMBER" ]; then
-              echo "Found PR #$PR_NUMBER from commit message."
-              API_ERR=""
-              PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" 2>"$GH_ERR_FILE") || API_ERR=$(cat "$GH_ERR_FILE")
-              if [ -n "$API_ERR" ]; then
-                echo "::error::Failed to fetch PR #$PR_NUMBER: $API_ERR"
-                exit 1
-              fi
-            fi
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::Expected pull request metadata on pull_request.closed."
+            exit 1
           fi
 
-          if [ -z "$PR_DATA" ]; then
-            echo "No merged PR found for this commit. Skipping release."
-            echo "bump_type=none" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          PR_BODY=$(echo "$PR_DATA" | jq -r '.body // ""')
-          PR_NUMBER=$(echo "$PR_DATA" | jq -r '.number')
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
           DELIM="EOF_$(uuidgen 2>/dev/null || echo "${RANDOM}${RANDOM}")"
@@ -98,7 +61,8 @@ jobs:
           elif echo "$PR_BODY" | grep -qE '^[[:space:]]*\- \[xX\] \*\*Patch\*\*'; then
             echo "bump_type=patch" >> "$GITHUB_OUTPUT"
           else
-            echo "bump_type=none" >> "$GITHUB_OUTPUT"
+            echo "::error::No version bump checkbox selected in PR #$PR_NUMBER."
+            exit 1
           fi
 
       - name: Compute new version
