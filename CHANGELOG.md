@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.1] – 2026-03-08
+
+### Changed
+
+Fix release workflow bump detection: correct broken regex (`\[xX\]` → `\[[xX]\]`), use temp file + `awk` markers for reliable multiline PR body handling, replace `echo | grep` with here-strings, and fall back to full-body scan when markers are missing. (PR #6)
+
+[1.0.1]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/v1.0.1
+
 ## [1.0.0] – 2024-01-01
 
 ### Added
