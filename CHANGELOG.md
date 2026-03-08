@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 Fix release workflow bump detection: correct broken regex (`\[xX\]` → `\[[xX]\]`), use temp file + `awk` markers for reliable multiline PR body handling, replace `echo | grep` with here-strings, and fall back to full-body scan when markers are missing. (PR #6)
 
-[1.0.1]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/v1.0.1
+[1.0.1]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.1
 
 ## [1.0.0] – 2024-01-01
 
@@ -30,4 +30,4 @@ Fix release workflow bump detection: correct broken regex (`\[xX\]` → `\[[xX]\
 - Settings UI for default pad character, line-number separator, pad toggle, GUID casing, case-sensitive filtering, filter history, and text slots.
 - Full multi-selection support: all commands operate on every active editor selection independently.
 
-[1.0.0]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/v1.0.0
+[1.0.0]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.0
