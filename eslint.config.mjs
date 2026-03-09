@@ -18,8 +18,8 @@ export default defineConfig([
       "obsidianmd/ui/sentence-case": [
         "error",
         {
-          // Preserve these proper nouns/acronyms that are not in the default list
-          ignoreWords: ["UTC", "ISO", "Unix", "GUIDs"],
+          // These proper nouns and acronyms are not in the plugin's default list
+          ignoreWords: ["UTC", "ISO", "Unix"],
         },
       ],
     },
