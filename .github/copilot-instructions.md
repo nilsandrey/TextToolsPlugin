@@ -53,7 +53,10 @@ Commands that need user input use `InputModal` or `TwoInputModal` (in `src/modal
 - **Pull request descriptions must use the required changelog markup**: PR descriptions must contain the expected sections for the Release pipeline used to update changelog and release notes. See the following "Pull request description content" section.
 
 ### Pull request description content
-PR descriptions must contain the expected sections for the Release pipeline used to update the changelog and release notes. Follow the [PULL_REQUEST_TEMPLATE.md](./PULL_REQUEST_TEMPLATE.md) template and fill in the description and type of change (major, minor, patch). Note that the markup comment tags (`<!--changelog-description-start-->`, `<!--changelog-description-end-->`, `<!--changelog-type-start-->`, and `<!--changelog-type-end-->`) are required for the pipeline to identify the sections. The description should be concise but informative, as it will be used in the changelog and release notes. **Exactly one** of the Major/Minor/Patch checkboxes must be checked — the release workflow picks the first matching checked box (Major → Minor → Patch) and will fail to create a release if none are checked.
+
+PR descriptions must contain the expected sections for the Release pipeline used to update the changelog and release notes. Follow the [PULL_REQUEST_TEMPLATE.md](./PULL_REQUEST_TEMPLATE.md) template and fill in the description and type of change (major, minor, patch). Note that the markup comment tags (`<!--changelog-description-start-->`, `<!--changelog-description-end-->`, `<!--changelog-type-start-->`, and `<!--changelog-type-end-->`) are required for the pipeline to identify the sections. The description should be concise but informative, as it will be used in the changelog and release notes.
+
+ The type of change must be accurately indicated to ensure proper versioning. **Exactly one** of the Major/Minor/Patch checkboxes must be checked — the release workflow picks the first matching checked box (Major → Minor → Patch) and will fail to create a release if none are checked.
 
 Sample:
 
