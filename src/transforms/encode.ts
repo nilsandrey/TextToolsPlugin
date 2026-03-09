@@ -46,12 +46,16 @@ export function htmlDecode(text: string): string {
 // ---------------------------------------------------------------------------
 
 export function base64Encode(text: string): string {
-	return btoa(unescape(encodeURIComponent(text)));
+	const bytes = new TextEncoder().encode(text);
+	const binStr = Array.from(bytes, (b) => String.fromCharCode(b)).join("");
+	return btoa(binStr);
 }
 
 export function base64Decode(text: string): string {
 	try {
-		return decodeURIComponent(escape(atob(text.trim())));
+		const binStr = atob(text.trim());
+		const bytes = Uint8Array.from(binStr, (ch) => ch.charCodeAt(0));
+		return new TextDecoder().decode(bytes);
 	} catch {
 		return text;
 	}
@@ -67,7 +71,7 @@ export function jsonEscape(text: string): string {
 
 export function jsonUnescape(text: string): string {
 	try {
-		const parsed = JSON.parse(text);
+		const parsed: unknown = JSON.parse(text);
 		if (typeof parsed === "string") return parsed;
 		return text;
 	} catch {
@@ -84,7 +88,7 @@ export function decimalToHex(text: string): string {
 }
 
 export function hexToDecimal(text: string): string {
-	return text.replace(/\b(?:0x)?([0-9a-fA-F]+)\b/g, (_, hex) =>
+	return text.replace(/\b(?:0x)?([0-9a-fA-F]+)\b/g, (_, hex: string) =>
 		parseInt(hex, 16).toString(10)
 	);
 }

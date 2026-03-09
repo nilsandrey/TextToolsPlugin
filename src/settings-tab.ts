@@ -12,7 +12,6 @@ export class TextToolsSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		;
 
 		// ------------------------------------------------------------------ //
 		// Line numbers
@@ -68,7 +67,7 @@ export class TextToolsSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Uppercase hex digits")
-			.setDesc("Insert GUIDs with uppercase hex characters (e.g. A1B2… vs a1b2…).")
+			.setDesc("Insert GUIDs using uppercase hex digits.")
 			.addToggle((t) =>
 				t
 					.setValue(this.plugin.settings.insertUppercaseGuids)

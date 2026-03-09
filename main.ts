@@ -223,10 +223,10 @@ export default class TextToolsPlugin extends Plugin {
 
 		this.addCommand({
 			id: "join-n-lines",
-			name: "Join every N lines",
+			name: "Join every n lines",
 			editorCallback: (editor) => {
 				new TwoInputModal(this.app, {
-					title: "Join every N lines",
+					title: "Join every n lines",
 					label1: "N (lines per group)",
 					label2: "Glue",
 					placeholder1: "2",
@@ -796,7 +796,7 @@ export default class TextToolsPlugin extends Plugin {
 						return;
 					}
 					this.settings.textSlots[idx] = texts.join("\n");
-					this.saveSettings();
+					void this.saveSettings();
 					new Notice(`Text slot ${i} set.`);
 				},
 			});
@@ -844,7 +844,7 @@ export default class TextToolsPlugin extends Plugin {
 	// =========================================================================
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, (await this.loadData()) as Partial<TextToolsSettings>);
 	}
 
 	async saveSettings() {
