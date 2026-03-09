@@ -52,7 +52,7 @@ Commands that need user input use `InputModal` or `TwoInputModal` (in `src/modal
 - **Obsidian API is external**: `obsidian`, `electron`, and `@codemirror/*` are externalized by esbuild — never bundle them.
 - **Pull request descriptions must use the required changelog markup**: PR descriptions must contain the expected sections for the Release pipeline used to update changelog and release notes. See the following "Pull request description content" section.
 
-### Pull request description content 
+### Pull request description content
 PR descriptions must contain the expected sections for the Release pipeline used to update changelog and release notes. Take the following template and fill in the description and type of change (major, minor, patch):
 
 ```md
@@ -63,7 +63,7 @@ PR descriptions must contain the expected sections for the Release pipeline used
      This text is used by the automated changelog pipeline — be clear and complete.
      Example: "Add 'Reverse words on each line' transform command." -->
 
-<!--changelog-description-end--> 
+<!--changelog-description-end-->
 
 ## Type of Change
 
