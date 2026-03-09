@@ -50,3 +50,52 @@ Commands that need user input use `InputModal` or `TwoInputModal` (in `src/modal
 - **The `perLine()` helper** in `case.ts` applies a function to each line independently. Use it for per-line transforms that don't need cross-line context.
 - **Multi-selection aware**: All commands must work with multiple simultaneous selections. Use `transformSelections()` or iterate `editor.listSelections()` in reverse.
 - **Obsidian API is external**: `obsidian`, `electron`, and `@codemirror/*` are externalized by esbuild — never bundle them.
+- **Pull request descriptions must use the required changelog markup**: PR descriptions must contain the expected sections for the Release pipeline used to update changelog and release notes. See the following "Pull request description content" section.
+
+### Pull request description content 
+PR descriptions must contain the expected sections for the Release pipeline used to update the changelog and release notes. Take the following template and fill in the description and type of change (major, minor, patch):
+
+```md
+## Description
+
+<!--changelog-description-start-->
+<!-- Write a concise description of the changes in this PR.
+     This text is used by the automated changelog pipeline — be clear and complete.
+     Example: "Add 'Reverse words on each line' transform command." -->
+
+<!--changelog-description-end--> 
+
+## Type of Change
+
+<!--changelog-type-start-->
+<!-- Check exactly ONE box to indicate the nature of this change for versioning purposes.
+     If no box is checked, the pipeline will not create a release. -->
+
+- [ ] **Major** – Breaking change (requires a new major version bump)
+- [ ] **Minor** – New feature, backward-compatible (requires a new minor version bump)
+- [ ] **Patch** – Bug fix or internal improvement, backward-compatible (requires a new patch version bump)
+
+<!--changelog-type-end-->
+```
+
+Sample:
+
+```md
+## Description
+
+<!--changelog-description-start-->
+Fix code quality issues: sentence case, promise handling, deprecated functions, and settings headings
+<!--changelog-description-end-->
+
+## Type of Change
+
+<!--changelog-type-start-->
+
+- [ ] **Major** – Breaking change (requires a new major version bump)
+- [ ] **Minor** – New feature, backward-compatible (requires a new minor version bump)
+- [x] **Patch** – Bug fix or internal improvement, backward-compatible (requires a new patch version bump)
+
+<!--changelog-type-end-->
+```
+
+Note that the markup comments tags (`<!--changelog-description-start-->`, `<!--changelog-description-end-->`, `<!--changelog-type-start-->`, and `<!--changelog-type-end-->`) are required for the pipeline to identify the sections. The description should be concise but informative, as it will be used in the changelog and release notes. The type of change must be accurately indicated to ensure proper versioning.
