@@ -55,7 +55,7 @@ export function base64Decode(text: string): string {
 	try {
 		const binStr = atob(text.trim());
 		const bytes = Uint8Array.from(binStr, (ch) => ch.charCodeAt(0));
-		return new TextDecoder().decode(bytes);
+		return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 	} catch {
 		return text;
 	}
