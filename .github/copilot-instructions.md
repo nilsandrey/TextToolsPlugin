@@ -53,30 +53,7 @@ Commands that need user input use `InputModal` or `TwoInputModal` (in `src/modal
 - **Pull request descriptions must use the required changelog markup**: PR descriptions must contain the expected sections for the Release pipeline used to update changelog and release notes. See the following "Pull request description content" section.
 
 ### Pull request description content
-PR descriptions must contain the expected sections for the Release pipeline used to update changelog and release notes. Take the following template and fill in the description and type of change (major, minor, patch):
-
-```md
-## Description
-
-<!--changelog-description-start-->
-<!-- Write a concise description of the changes in this PR.
-     This text is used by the automated changelog pipeline — be clear and complete.
-     Example: "Add 'Reverse words on each line' transform command." -->
-
-<!--changelog-description-end-->
-
-## Type of Change
-
-<!--changelog-type-start-->
-<!-- Check exactly ONE box to indicate the nature of this change for versioning purposes.
-     If no box is checked the pipeline will not create a release. -->
-
-- [ ] **Major** – Breaking change (requires a new major version bump)
-- [ ] **Minor** – New feature, backward-compatible (requires a new minor version bump)
-- [ ] **Patch** – Bug fix or internal improvement, backward-compatible (requires a new patch version bump)
-
-<!--changelog-type-end-->
-```
+PR descriptions must contain the expected sections for the Release pipeline used to update the changelog and release notes. Follow the [PULL_REQUEST_TEMPLATE.md](./PULL_REQUEST_TEMPLATE.md) template and fill in the description and type of change (major, minor, patch). Note that the markup comment tags (`<!--changelog-description-start-->`, `<!--changelog-description-end-->`, `<!--changelog-type-start-->`, and `<!--changelog-type-end-->`) are required for the pipeline to identify the sections. The description should be concise but informative, as it will be used in the changelog and release notes. The type of change must be accurately indicated to ensure proper versioning.
 
 Sample:
 
@@ -97,5 +74,3 @@ Fix code quality issues: sentence case, promise handling, deprecated functions, 
 
 <!--changelog-type-end-->
 ```
-
-Note that the markup comment tags (`<!--changelog-description-start-->`, `<!--changelog-description-end-->`, `<!--changelog-type-start-->`, and `<!--changelog-type-end-->`) are required for the pipeline to identify the sections. The description should be concise but informative, as it will be used in the changelog and release notes. The type of change must be accurately indicated to ensure proper versioning.
