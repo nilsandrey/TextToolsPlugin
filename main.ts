@@ -796,7 +796,9 @@ export default class TextToolsPlugin extends Plugin {
 						return;
 					}
 					this.settings.textSlots[idx] = texts.join("\n");
-					void this.saveSettings();
+					void this.saveSettings().catch((error) => {
+						console.error("Text Tools: failed to save settings", error);
+					});
 					new Notice(`Text slot ${i} set.`);
 				},
 			});
