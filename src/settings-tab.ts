@@ -12,12 +12,12 @@ export class TextToolsSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl("h2", { text: "Local Text Tools" });
+		;
 
 		// ------------------------------------------------------------------ //
 		// Line numbers
 		// ------------------------------------------------------------------ //
-		containerEl.createEl("h3", { text: "Line numbers" });
+		new Setting(containerEl).setName("Line numbers").setHeading();
 
 		new Setting(containerEl)
 			.setName("Separator")
@@ -47,7 +47,7 @@ export class TextToolsSettingTab extends PluginSettingTab {
 		// ------------------------------------------------------------------ //
 		// Filtering
 		// ------------------------------------------------------------------ //
-		containerEl.createEl("h3", { text: "Filter lines" });
+		new Setting(containerEl).setName("Filter lines").setHeading();
 
 		new Setting(containerEl)
 			.setName("Case-sensitive filtering")
@@ -64,7 +64,7 @@ export class TextToolsSettingTab extends PluginSettingTab {
 		// ------------------------------------------------------------------ //
 		// GUIDs
 		// ------------------------------------------------------------------ //
-		containerEl.createEl("h3", { text: "GUIDs" });
+		new Setting(containerEl).setName("GUIDs").setHeading();
 
 		new Setting(containerEl)
 			.setName("Uppercase hex digits")
@@ -81,7 +81,7 @@ export class TextToolsSettingTab extends PluginSettingTab {
 		// ------------------------------------------------------------------ //
 		// Padding
 		// ------------------------------------------------------------------ //
-		containerEl.createEl("h3", { text: "Padding" });
+		new Setting(containerEl).setName("Padding").setHeading();
 
 		new Setting(containerEl)
 			.setName("Default pad character")
