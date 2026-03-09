@@ -227,14 +227,14 @@ export default class TextToolsPlugin extends Plugin {
 			editorCallback: (editor) => {
 				new TwoInputModal(this.app, {
 					title: "Join every n lines",
-					label1: "N (lines per group)",
+					label1: "Number of lines per group",
 					label2: "Glue",
 					placeholder1: "2",
 					placeholder2: " ",
 					onSubmit: (nStr, glue) => {
 						const n = parseInt(nStr, 10);
 						if (!n || n < 1) {
-							new Notice("N must be a positive integer.");
+							new Notice("Enter a positive integer.");
 							return;
 						}
 						transformSelections(editor, (t) => joinEveryNLines(t, n, glue));

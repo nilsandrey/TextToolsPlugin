@@ -1,4 +1,4 @@
-import { App, Modal, Setting } from "obsidian";
+import { App, Modal, Notice, Setting } from "obsidian";
 
 /**
  * A single-input modal that resolves to a string (or null if cancelled).
@@ -31,6 +31,16 @@ export class InputModal extends Modal {
 		this.onCancel = options.onCancel ?? (() => {});
 	}
 
+	private submitAndCatch(value: string): void {
+		const result = this.onSubmit(value);
+		if (result instanceof Promise) {
+			result.catch((error: unknown) => {
+				console.error("Text Tools: error in submit handler", error);
+				new Notice("An error occurred. See the developer console for details.");
+			});
+		}
+	}
+
 	onOpen() {
 		const { contentEl } = this;
 		this.value = this.defaultValue;
@@ -48,7 +58,7 @@ export class InputModal extends Modal {
 					if (e.key === "Enter") {
 						e.preventDefault();
 						this.close();
-						void this.onSubmit(this.value);
+						this.submitAndCatch(this.value);
 					}
 					if (e.key === "Escape") {
 						e.preventDefault();
@@ -67,7 +77,7 @@ export class InputModal extends Modal {
 					.setCta()
 					.onClick(() => {
 						this.close();
-						void this.onSubmit(this.value);
+						this.submitAndCatch(this.value);
 					})
 			)
 			.addButton((btn) =>
