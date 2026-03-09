@@ -223,18 +223,18 @@ export default class TextToolsPlugin extends Plugin {
 
 		this.addCommand({
 			id: "join-n-lines",
-			name: "Join every N lines",
+			name: "Join every n lines",
 			editorCallback: (editor) => {
 				new TwoInputModal(this.app, {
-					title: "Join every N lines",
-					label1: "N (lines per group)",
+					title: "Join every n lines",
+					label1: "Number of lines per group",
 					label2: "Glue",
 					placeholder1: "2",
 					placeholder2: " ",
 					onSubmit: (nStr, glue) => {
 						const n = parseInt(nStr, 10);
 						if (!n || n < 1) {
-							new Notice("N must be a positive integer.");
+							new Notice("Enter a positive integer.");
 							return;
 						}
 						transformSelections(editor, (t) => joinEveryNLines(t, n, glue));
@@ -796,7 +796,9 @@ export default class TextToolsPlugin extends Plugin {
 						return;
 					}
 					this.settings.textSlots[idx] = texts.join("\n");
-					this.saveSettings();
+					void this.saveSettings().catch((error) => {
+						console.error("Text Tools: failed to save settings", error);
+					});
 					new Notice(`Text slot ${i} set.`);
 				},
 			});
@@ -844,7 +846,7 @@ export default class TextToolsPlugin extends Plugin {
 	// =========================================================================
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, (await this.loadData()) as Partial<TextToolsSettings>);
 	}
 
 	async saveSettings() {
