@@ -1,6 +1,6 @@
 {
   "name": "obsidian-text-tools",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Text manipulation tools for Obsidian",
   "main": "main.js",
   "scripts": {

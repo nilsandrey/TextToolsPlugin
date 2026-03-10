@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.4] – 2026-03-10
+
+### Changed
+
+Fix sentence case ESLint config: remove redundant "GUIDs" from ignoreWords (handled by CamelCase detection), keeping UTC/ISO/Unix for Obsidian review bot compliance (PR #14)
+
+[1.0.4]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.4
+
 ## [1.0.3] – 2026-03-09
 
 ### Changed
