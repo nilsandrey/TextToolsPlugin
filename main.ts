@@ -635,13 +635,13 @@ export default class TextToolsPlugin extends Plugin {
 		});
 		this.addCommand({
 			id: "insert-timestamp-utc",
-			name: "Insert timestamp (UTC / ISO 8601)",
+			name: "Insert timestamp (utc / iso 8601)",
 			editorCallback: (editor) =>
 				this.insertAtEachSelection(editor, timestampUTC),
 		});
 		this.addCommand({
 			id: "insert-timestamp-unix",
-			name: "Insert Unix timestamp",
+			name: "Insert unix timestamp",
 			editorCallback: (editor) =>
 				this.insertAtEachSelection(editor, timestampUnix),
 		});

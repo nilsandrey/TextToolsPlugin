@@ -63,11 +63,11 @@ export class TextToolsSettingTab extends PluginSettingTab {
 		// ------------------------------------------------------------------ //
 		// GUIDs
 		// ------------------------------------------------------------------ //
-		new Setting(containerEl).setName("GUIDs").setHeading();
+		new Setting(containerEl).setName("Guids").setHeading();
 
 		new Setting(containerEl)
 			.setName("Uppercase hex digits")
-			.setDesc("Insert GUIDs using uppercase hex digits.")
+			.setDesc("Insert guids using uppercase hex digits.")
 			.addToggle((t) =>
 				t
 					.setValue(this.plugin.settings.insertUppercaseGuids)
