@@ -63,7 +63,7 @@ export class TextToolsSettingTab extends PluginSettingTab {
 		// ------------------------------------------------------------------ //
 		// GUIDs
 		// ------------------------------------------------------------------ //
-		new Setting(containerEl).setName("GUIDs").setHeading();
+		new Setting(containerEl).setName("Guids").setHeading();
 
 		new Setting(containerEl)
 			.setName("Uppercase hex digits")
