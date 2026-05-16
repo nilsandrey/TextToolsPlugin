@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.8] – 2026-05-16
+
+### Changed
+
+     This text is used by the automated changelog pipeline — be clear and complete.
+     Example: "Add 'Reverse words on each line' transform command." -->
+Internal build process: Remove built in-module dependency in favor of native features. (PR #20)
+
+[1.0.8]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.8
+
 ## [1.0.7] – 2026-05-16
 
 ### Changed
