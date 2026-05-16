@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.7] – 2026-05-16
+
+### Changed
+
+- Improve release workflow with artifact attestation and version commit SHA. Required by Obsidian.
+- Move copilot instructions into AGENT.md which is more standard and supported by all agents. (PR #19)
+
+[1.0.7]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.7
+
 ## [1.0.6] – 2026-05-16
 
 ### Changed
