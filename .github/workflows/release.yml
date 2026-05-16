@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
   pull-requests: read
 
 jobs:
@@ -177,16 +179,26 @@ jobs:
 
       - name: Commit version and changelog updates
         if: steps.bump.outputs.bump_type != 'none'
+        id: release_commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json manifest.json versions.json CHANGELOG.md
           git commit -m "chore: release ${{ steps.version.outputs.new_version }} [skip ci]"
           git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Build release artifacts
         if: steps.bump.outputs.bump_type != 'none'
         run: npm run build
+
+      - name: Generate artifact attestation
+        if: steps.bump.outputs.bump_type != 'none'
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            main.js
+            manifest.json
 
       - name: Create GitHub Release
         if: steps.bump.outputs.bump_type != 'none'
@@ -194,8 +206,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW: ${{ steps.version.outputs.new_version }}
           DESCRIPTION: ${{ steps.changelog_entry.outputs.description }}
+          RELEASE_SHA: ${{ steps.release_commit.outputs.sha }}
         run: |
           gh release create "${NEW}" \
+            --target "${RELEASE_SHA}" \
             --title "${NEW}" \
             --notes "${DESCRIPTION}" \
             main.js manifest.json
