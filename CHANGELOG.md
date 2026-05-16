@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.6] – 2026-05-16
+
+### Changed
+
+Fix manifest metadata (PR #18)
+
+[1.0.6]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.6
+
 ## [1.0.4] – 2026-03-10
 
 ### Changed
