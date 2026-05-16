@@ -6,14 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-## [1.0.5] – 2026-05-16
-
-### Changed
-
-Update manifest author metadata. (PR #16)
-
-[1.0.5]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.5
-
 ## [1.0.4] – 2026-03-10
 
 ### Changed
@@ -26,9 +18,7 @@ Fix sentence case ESLint config: remove redundant "GUIDs" from ignoreWords (hand
 
 ### Changed
 
-Fix code quality issues: sentence case, promise handling, deprecated functions, and settings headings.
- (PR #10)
- (PR #10)
+Fix code quality issues: sentence case, promise handling, deprecated functions, and settings headings. (PR #10)
 
 [1.0.3]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.3
 
