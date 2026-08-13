@@ -79,7 +79,7 @@ export function toDotCase(text: string): string {
 export function toTitleCase(text: string): string {
 	return perLine(text, (line) =>
 		line.replace(
-			/\b\w+/g,
+			/[\p{L}\p{N}]+/gu,
 			(w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
 		)
 	);
@@ -135,7 +135,9 @@ export function reverseLines(text: string): string {
 
 /** Removes diacritic marks — e.g. "café" → "cafe", "Ñoño" → "Nono" */
 export function latinize(text: string): string {
-	return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+	return text
+		.normalize("NFD")
+		.replace(/[^\p{L}\p{N}_\s]+/gu, "");
 }
 
 /** URL-friendly slug: lowercase, ASCII, spaces→dashes */
