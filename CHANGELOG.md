@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.10] – 2026-08-13
+
+### Changed
+
+Update minimum app version requirement to 1.11.0. (PR #23)
+
+[1.0.10]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.10
+
 ## [1.0.9] – 2026-08-13
 
 ### Changed
