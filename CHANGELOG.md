@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.9] – 2026-08-13
+
+### Changed
+
+Fix Unicode-aware title casing and slug normalization for non-ASCII text so accent marks are handled correctly. (PR #22)
+
+[1.0.9]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.9
+
 ## [1.0.8] – 2026-05-16
 
 ### Changed
