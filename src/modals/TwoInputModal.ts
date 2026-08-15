@@ -35,7 +35,7 @@ export class TwoInputModal extends Modal {
 				t.setPlaceholder(options.placeholder1 ?? "")
 					.setValue(this.value1)
 					.onChange((v) => (this.value1 = v));
-				setTimeout(() => t.inputEl.focus(), 50);
+				window.setTimeout(() => t.inputEl.focus(), 50);
 			});
 
 		new Setting(contentEl)
