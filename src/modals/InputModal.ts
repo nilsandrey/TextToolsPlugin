@@ -67,7 +67,7 @@ export class InputModal extends Modal {
 					}
 				});
 				// Auto-focus
-				setTimeout(() => text.inputEl.focus(), 50);
+				window.setTimeout(() => text.inputEl.focus(), 50);
 			});
 
 		new Setting(contentEl)
