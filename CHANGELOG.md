@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.11] – 2026-08-15
+
+### Changed
+
+     This text is used by the automated changelog pipeline — be clear and complete.
+     Example: "Add 'Reverse words on each line' transform command." -->
+Use 'window.setTimeout()' instead of 'setTimeout()' for popout window compatibility. (PR #25)
+
+[1.0.11]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.11
+
 ## [1.0.10] – 2026-08-13
 
 ### Changed
