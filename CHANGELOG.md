@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.12] – 2026-08-16
+
+### Changed
+
+Implement `getSettingDefinitions()` on the settings tab so the plugin's settings appear in Obsidian's global settings search on Obsidian 1.13.0 and later. (PR #27)
+
+[1.0.12]: https://github.com/nilsandrey/TextToolsPlugin/releases/tag/1.0.12
+
 ## [1.0.11] – 2026-08-15
 
 ### Changed
